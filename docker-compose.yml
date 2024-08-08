@@ -79,9 +79,9 @@ services:
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connect-jars
     volumes:
       - $PWD/data:/data
-      - C:/Projetos/kafka/file:/kafka-file # Adicionando o volume do arquivo host
-      - C:/Projetos/kafka/file:/kafka-file/finished # Adicionando o volume do arquivo host
-      - C:/Projetos/kafka/file:/kafka-file/error # Adicionando o volume do arquivo host
+      - /mnt/c/projetos/poc-kafka-connect/kafka-connect/file:/kafka-file # Adicionando o volume do arquivo host
+      - /mnt/c/projetos/poc-kafka-connect/kafka-connect/file:/kafka-file/finished # Adicionando o volume do arquivo host
+      - /mnt/c/projetos/poc-kafka-connect/kafka-connect/file:/kafka-file/error # Adicionando o volume do arquivo host
     command:
       - bash
       - -c
@@ -99,11 +99,8 @@ services:
       - "host.docker.internal:172.17.0.1"
 
   mongodb:
-    image: mongo:4.4.4
+    image: mongo:latest
     restart: always
-    volumes:
-      - ./.docker/dbdata:/data/db
-      - ./.docker/mongo:/docker-entrypoint-initdb.d
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
