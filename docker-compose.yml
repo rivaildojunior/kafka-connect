@@ -76,29 +76,25 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-      # # Optional settings to include to support Confluent Control Center
-      #   CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-      #   CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      #  ---------------
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connect-jars
-    # If you want to use the Confluent Hub installer to d/l component, but make them available
-    # when running this offline, spin up the stack once and then run :
-    #   docker cp kafka-connect:/usr/share/confluent-hub-components ./data/connect-jars
     volumes:
       - $PWD/data:/data
-    # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+      - C:/Projetos/kafka/file:/kafka-file # Adicionando o volume do arquivo host
+      - C:/Projetos/kafka/file:/kafka-file/finished # Adicionando o volume do arquivo host
+      - C:/Projetos/kafka/file:/kafka-file/error # Adicionando o volume do arquivo host
     command:
       - bash
       - -c
       - |
-        echo "Installing Connector"
+        echo "Installing Connectors"
         confluent-hub install --no-prompt debezium/debezium-connector-mysql:1.2.2
         confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.5.0
+        #confluent-hub install --no-prompt confluentinc/kafka-connect-sqs:latest # Instalando o conector SQS
+        #confluent-hub install --no-prompt confluentinc/kafka-connect-s3:latest # Instalando o conector S3
+        confluent-hub install --no-prompt jcustenborder/kafka-connect-spooldir:latest
         #
         echo "Launching Kafka Connect worker"
-        /etc/confluent/docker/run &
-        #
-        sleep infinity
+        /etc/confluent/docker/run
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
